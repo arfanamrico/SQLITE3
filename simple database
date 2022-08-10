@@ -1,0 +1,52 @@
+import sqlite3
+from faker import Faker
+from random import randint
+
+def main():
+    membuat_tabel()
+
+    # membuat 100 mahasiswa baru
+    for _ in range(100):
+        isi_data(buat_npm_random(), buat_nama_random(), buat_nilai_random())
+
+def membuat_tabel():
+    # agar terhubung ke db
+    con = sqlite3.connect('mahasiswa.db')
+    cur = con.cursor()
+
+    # perintah sql untuk manipulasi db
+    cur.execute('''CREATE TABLE IF NOT EXISTS mahasiswa (npm INTEGER, name VARCHAR, nilai float)''')
+    
+    # memutus koneksi dengan db
+    con.commit()
+    con.close()
+    
+
+def isi_data(npm, name, nilai):
+    print(npm, name, nilai)
+
+    # membangun koneksi dengan db
+    con = sqlite3.connect('mahasiswa.db')
+    cur = con.cursor()
+
+    # mengeksekusi SQL 
+    cur.execute(f'''INSERT INTO mahasiswa(npm, name, nilai) VALUES({npm}, "{name}", {nilai})''')
+    
+    # menutup koneksi
+    con.commit()
+    con.close()
+
+
+def buat_nama_random():
+    fake = Faker()
+    return fake.name()
+
+def buat_npm_random():
+    return randint(100000, 999999)
+
+def buat_nilai_random():
+    return randint(40.0, 99.0)
+
+
+if __name__ == "__main__":
+    main()
